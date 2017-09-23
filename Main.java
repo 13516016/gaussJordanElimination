@@ -7,9 +7,12 @@ public class Main {
     mMatrix.readMatrix();
     mMatrix.writeMatrix();
     System.out.println();
+    // mMatrix.pivotMatrix();
+    // mMatrix.rowEchelonForm();
+    // mMatrix.writeMatrix();
     mMatrix.gaussJordanEliminate();
     mMatrix.writeMatrix();
+    mMatrix.showSolutions();
+
   }
-
-
 }

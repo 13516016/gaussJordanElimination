@@ -4,11 +4,14 @@ public class Matrix{
 
   final int maxRow = 50;
   final int maxColumn = 50;
+  final int SOLVABLE = 1;
+  final int  INFINITE_SOLUTION = 0;
+  final int  NO_SOLUTION = -1;
 
   private int row;
   private int column;
   private float[][] table = new float[maxRow][maxColumn];
-  private boolean solvable = true;
+  private int isSolvable = SOLVABLE;
 
   Scanner input = new Scanner(System.in);
 
@@ -61,7 +64,6 @@ public class Matrix{
          if (this.table[i][i]<this.table[k][i]){
            swapRows (i,k);
          }
-
        }
      }
    }
@@ -77,8 +79,8 @@ public class Matrix{
    }
 
    void gaussEliminate(){
-
      this.pivotMatrix();
+
      for (int i = 0; i < this.row-1; i++) {
        for (int k = i+1; k < this.row; k++) {
          float m = this.table[k][i]/this.table[i][i];
@@ -88,8 +90,40 @@ public class Matrix{
        }
      }
 
+
+
    }
 
+
+   int checkZeroRow(){
+    int j=0;
+    int count=0;
+    int check;
+
+    for (int i = this.row-1; i >= 0; i--) {
+
+      while (j<this.column-1 && this.table[i][j]==0){
+          j++;
+      }
+      if (j==this.column-1){
+        if (this.table[i][j] == 0){
+          count++;
+        }
+      }
+    }
+    return count;
+   }
+
+   void checkSolvable(){
+     if (this.row - this.checkZeroRow() == this.column-1){
+      this.row -= this.checkZeroRow();
+      //TODO : CHECK NO SOLUTION
+     }
+     else {
+       this.isSolvable = INFINITE_SOLUTION;
+     }
+
+   }
    void rowEchelonForm(){
      this.gaussEliminate();
      for (int i = 0; i < this.row; i++) {
@@ -115,6 +149,12 @@ public class Matrix{
    }
 
    void showSolutions(){
-
+    this.gaussJordanEliminate();
+    System.out.println("SOLUSI : ");
+    int j = this.column-1;
+    for (int i = 0; i < this.row; i++) {
+      System.out.printf("x%d : ",i+1);
+      System.out.println(this.table[i][j]);
+    }
    }
 }
