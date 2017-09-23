@@ -8,11 +8,11 @@ public class Main {
     mMatrix.writeMatrix();
     System.out.println();
     // mMatrix.pivotMatrix();
+    // mMatrix.gaussEliminate();
     // mMatrix.rowEchelonForm();
     // mMatrix.writeMatrix();
-    mMatrix.gaussJordanEliminate();
-    mMatrix.writeMatrix();
+    // mMatrix.gaussJordanEliminate();
+    // mMatrix.writeMatrix();
     mMatrix.showSolutions();
-
   }
 }
