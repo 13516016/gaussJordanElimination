@@ -4,19 +4,22 @@ public class Matrix{
 
   final int maxRow = 50;
   final int maxColumn = 50;
+
   final int SOLVABLE = 1;
   final int  INFINITE_SOLUTION = 0;
   final int  NO_SOLUTION = -1;
+
   final double  DELTA = 9.0E-6;
   float div;
   float m;
 
-  
+
   private int row;
   private int column;
   private float[][] table = new float[maxRow][maxColumn];
   private ArrayList<Integer> parameters = new ArrayList<>();
   private int isSolvable = SOLVABLE;
+
 
   Scanner input = new Scanner(System.in);
 
@@ -151,8 +154,9 @@ public class Matrix{
       }
 
       if (this.table[i][i]==0){
-        this.parameters.add(i+1);
+        // this.parameters.add(i+1);
       }
+
       if (j==this.column-1){
         if (this.table[i][j] == 0){
           count++;
@@ -162,23 +166,45 @@ public class Matrix{
           break;
         }
       }
-
     }
-
     return count;
    }
 
+
    void checkSolvable(){
       if (this.isSolvable !=NO_SOLUTION){
-       if (this.row - this.checkZeroRow() == this.column-1){
-        this.row -= this.checkZeroRow();
+       if (this.row - this.checkZeroRow() != this.column-1){
+         this.isSolvable = INFINITE_SOLUTION;
        }
        else {
          this.row -= this.checkZeroRow();
-         this.isSolvable = INFINITE_SOLUTION;
        }
      }
    }
+
+   private void printParameters(){
+     int i;
+     int j;
+
+     for (int i = 0; i < this.row; i++) {
+
+       System.out.println("x%d = ",i+1);
+       if (this.table[i][this.column-1]!=0){
+         System.out.println("%d",this.table[i][this.column-1]);
+       }
+
+       for (int j = 0; j < this.column-1; i++) {
+         if (i!=j){
+
+            if (this.table[i][j]!=0){
+              System.out.println("x%d",j+1);
+            }
+
+         }
+       }
+     }
+   }
+
 
    void showSolutions(){
     this.gaussJordanEliminate();
