@@ -147,6 +147,7 @@ public class Matrix{
     int count=0;
     int check;
 
+
     for (int i = this.row-1; i >= 0; i--) {
         j=0;
       while (j<this.column-1 && (this.table[i][j]==0 || this.table[i][i]==0)){
@@ -182,25 +183,48 @@ public class Matrix{
      }
    }
 
+   boolean isZeroRow(int i){
+     int j=0;
+     boolean check = false;
+     while (j<this.column-1 && this.table[i][j]==0){
+         j++;
+     }
+
+     if (this.table[i][j]==0){
+       check = true;
+     }
+     return check;
+   }
+
    private void printParameters(){
-     int i;
-     int j;
 
      for (int i = 0; i < this.row; i++) {
 
-       System.out.println("x%d = ",i+1);
-       if (this.table[i][this.column-1]!=0){
-         System.out.println("%d",this.table[i][this.column-1]);
-       }
-
-       for (int j = 0; j < this.column-1; i++) {
-         if (i!=j){
-
-            if (this.table[i][j]!=0){
-              System.out.println("x%d",j+1);
-            }
-
+       if (!isZeroRow(i)){
+         System.out.printf("x%d = ",i+1);
+         if (this.table[i][this.column-1]!=0){
+           System.out.print(this.table[i][this.column-1]);
          }
+         for (int j = 0; j < this.column-1; j++) {
+           if (i!=j){
+              if (this.table[i][j]!=0){
+                if (this.table[i][j]<0){
+                  System.out.printf("+");
+                }
+                if (this.table[i][j]!=1 || this.table[i][j]!=-1){
+                  System.out.print((this.table[i][j])*-1);
+                }
+                if (this.table[i][j]==1){
+                  System.out.print("-x");
+                }
+                else {
+                  System.out.print("x");
+                }
+                System.out.print(j+1);
+              }
+           }
+         }
+         System.out.println();
        }
      }
    }
@@ -219,6 +243,7 @@ public class Matrix{
       }
     }
     else if (this.isSolvable == INFINITE_SOLUTION){
+      this.printParameters();
       System.out.println("Solusi tak hingga banyaknya.");
     }
     else {
