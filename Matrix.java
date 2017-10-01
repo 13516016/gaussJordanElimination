@@ -17,6 +17,7 @@ public class Matrix{
   private int row;
   private int column;
   private float[][] table = new float[maxRow][maxColumn];
+
   private ArrayList<Integer> parameters = new ArrayList<>();
   private int isSolvable = SOLVABLE;
 
@@ -89,7 +90,6 @@ public class Matrix{
 
    void gaussEliminate(){
      this.pivotMatrix();
-
      for (int i = 0; i < this.row-1; i++) {
        for (int k = i+1; k < this.row; k++) {
          if (this.table[i][i]!=0){
@@ -147,15 +147,11 @@ public class Matrix{
     int count=0;
     int check;
 
-
     for (int i = this.row-1; i >= 0; i--) {
-        j=0;
-      while (j<this.column-1 && (this.table[i][j]==0 || this.table[i][i]==0)){
-          j++;
-      }
 
-      if (this.table[i][i]==0){
-        // this.parameters.add(i+1);
+      j=0;
+      while (j<this.column-1 && (this.table[i][j]==0 )){
+          j++;
       }
 
       if (j==this.column-1){
@@ -167,14 +163,18 @@ public class Matrix{
           break;
         }
       }
+
+
     }
     return count;
    }
 
 
    void checkSolvable(){
+     int zeroRows = this.checkZeroRow();
+
       if (this.isSolvable !=NO_SOLUTION){
-       if (this.row - this.checkZeroRow() != this.column-1){
+       if (this.row - zeroRows != this.column-1){
          this.isSolvable = INFINITE_SOLUTION;
        }
        else {
@@ -197,35 +197,47 @@ public class Matrix{
    }
 
    private void printParameters(){
+     char x = 'o';
+     char[] parameters = new char[50];
 
-     for (int i = 0; i < this.row; i++) {
-
+     for (int i = 0; i < this.column-1; i++) {
        if (!isZeroRow(i)){
          System.out.printf("x%d = ",i+1);
          if (this.table[i][this.column-1]!=0){
            System.out.print(this.table[i][this.column-1]);
          }
+
          for (int j = 0; j < this.column-1; j++) {
            if (i!=j){
               if (this.table[i][j]!=0){
+                if (parameters[j]=='\0'){
+                  x++;
+                  parameters[j] = x;
+                };
                 if (this.table[i][j]<0){
-                  System.out.printf("+");
+                  if(this.table[i][this.column-1]!=0){
+                    System.out.printf(" + ");
+                  }
                 }
-                if (this.table[i][j]!=1 || this.table[i][j]!=-1){
+                if (this.table[i][j]!=1 && this.table[i][j]!=-1){
                   System.out.print((this.table[i][j])*-1);
                 }
                 if (this.table[i][j]==1){
-                  System.out.print("-x");
+                  System.out.printf("-%c",parameters[j]);
                 }
                 else {
-                  System.out.print("x");
+                  System.out.printf("%c",parameters[j]);
                 }
-                System.out.print(j+1);
+
               }
            }
          }
-         System.out.println();
        }
+       else {
+         System.out.printf("x%d = ",i+1);
+         System.out.printf("%c",parameters[i]);
+       }
+       System.out.println();
      }
    }
 
@@ -244,7 +256,6 @@ public class Matrix{
     }
     else if (this.isSolvable == INFINITE_SOLUTION){
       this.printParameters();
-      System.out.println("Solusi tak hingga banyaknya.");
     }
     else {
       System.out.println("Persamaan tidak memiliki penyelesaian.");
