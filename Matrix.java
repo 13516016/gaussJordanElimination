@@ -1,4 +1,6 @@
+import java.io.*;
 import java.util.*;
+import java.lang.*;
 
 public class Matrix{
 
@@ -41,9 +43,9 @@ public class Matrix{
   }
 
   void readMatrix(){
-    System.out.print("Masukkan jumlah baris: ");
+    System.out.print("Tulis jumlah baris: ");
     this.row = input.nextInt();
-    System.out.print("Masukkan jumlah kolom: ");
+    System.out.print("Tulis jumlah kolom: ");
     this.column = input.nextInt();
 
     for (int i = 0; i < this.row; i++) {
@@ -51,6 +53,45 @@ public class Matrix{
         this.table[i][j] = input.nextFloat();
       }
     }
+  }
+
+  void readFileMatrix(){
+    String fileName;
+    System.out.print("Tuliskan nama file: ");
+    fileName = input.next();
+  	try{
+  	Scanner in  = new Scanner(new File(fileName));
+  	int row = 0; int col = 0;
+  	//algoritma hitung baris dan kolom
+  	//baca baris pertama
+  	if(in.hasNextLine()){
+  	row++;
+  	Scanner test = new Scanner(in.nextLine());
+  	//baca kolom pertama
+  	while (test.hasNextInt())
+  		{++col; test.nextInt();}
+  	//baca baris berikutnya
+  	while(in.hasNextLine()){
+  		row++;
+  	//baca kolom berikutnya
+  		while (test.hasNextInt())
+  			{++col; test.nextInt();}
+  		in.nextLine();
+  		}
+  	//buat matriks baru dari jumlah baris & kolom yang dibaca
+  	this.row = row;
+    this.column = col;
+  	in.close();
+  	//algoritma baca matriks
+  	in  = new Scanner(new File("input.txt"));
+  	for(int i=0; i<row; i++)
+  	{for(int j=0;j<col;j++)
+  		{if(in.hasNextInt())
+  			this.table[i][j] = in.nextInt();}
+  		}
+  	in.close();
+    	}
+  	}catch (IOException x){x.printStackTrace();}
   }
 
   void writeMatrix(){
@@ -169,7 +210,6 @@ public class Matrix{
     return count;
    }
 
-
    void checkSolvable(){
      int zeroRows = this.checkZeroRow();
 
@@ -241,7 +281,6 @@ public class Matrix{
      }
    }
 
-
    void showSolutions(){
     this.gaussJordanEliminate();
     this.checkSolvable();
@@ -261,4 +300,18 @@ public class Matrix{
       System.out.println("Persamaan tidak memiliki penyelesaian.");
     }
    }
+
+   void writeFileMatrix() {
+   try{
+     FileWriter w = new FileWriter("output.txt",false);
+     for(int i = 0; i<this.row; i++){
+       for(int j = 0; j<this.column; j++)
+         { w.write(Float.toString(this.table[i][j])+" ");}
+     w.write("\r\n");}
+     w.close();
+   } catch (IOException x){System.err.println("File not found");}
+
+  }
+
+
 }
