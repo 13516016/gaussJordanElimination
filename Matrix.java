@@ -11,14 +11,13 @@ public class Matrix{
   final int  INFINITE_SOLUTION = 0;
   final int  NO_SOLUTION = -1;
 
-  final double  DELTA = 9.0E-6;
-  float div;
-  float m;
-
+  final Double  DELTA = 9.0E-6;
+  double div;
+  double m;
 
   private int row;
   private int column;
-  private float[][] table = new float[maxRow][maxColumn];
+  private double[][] table = new double[maxRow][maxColumn];
 
   private ArrayList<Integer> parameters = new ArrayList<>();
   private int isSolvable = SOLVABLE;
@@ -50,12 +49,36 @@ public class Matrix{
 
     for (int i = 0; i < this.row; i++) {
       for (int j = 0; j < this.column; j++) {
-        this.table[i][j] = input.nextFloat();
+        this.table[i][j] = input.nextDouble();
       }
     }
   }
 
+  void makeInterpolateData(){
+    int n;
+    Double[] data= new Double[maxColumn];
+    Double x;
+    Double y;
+
+    System.out.print("Tulis jumlah data : ");
+    n = input.nextInt();
+    this.row = n;
+    this.column = n+1;
+
+    for (int i = 0; i < row; i++) {
+      System.out.printf("x%d = ",i+1);
+      x = input.nextDouble();
+      for (int j = 0; j < column-1; j++) {
+        this.table[i][j] = Math.pow(x,j);
+      }
+      System.out.printf("f(x%d) = ",i+1);
+      y = input.nextDouble();
+      this.table[i][this.column-1] = y;
+    }
+  }
+
   void readFileMatrix(){
+
     String fileName;
     System.out.print("Tuliskan nama file: ");
     fileName = input.next();
@@ -68,14 +91,14 @@ public class Matrix{
   	row++;
   	Scanner test = new Scanner(in.nextLine());
   	//baca kolom pertama
-  	while (test.hasNextInt())
-  		{++col; test.nextInt();}
+  	while (test.hasNextDouble())
+  		{++col; test.nextDouble();}
   	//baca baris berikutnya
   	while(in.hasNextLine()){
   		row++;
   	//baca kolom berikutnya
-  		while (test.hasNextInt())
-  			{++col; test.nextInt();}
+  		while (test.hasNextDouble())
+  			{++col; test.nextDouble();}
   		in.nextLine();
   		}
   	//buat matriks baru dari jumlah baris & kolom yang dibaca
@@ -83,15 +106,18 @@ public class Matrix{
     this.column = col;
   	in.close();
   	//algoritma baca matriks
-  	in  = new Scanner(new File("input.txt"));
+  	in  = new Scanner(new File(fileName));
   	for(int i=0; i<row; i++)
   	{for(int j=0;j<col;j++)
-  		{if(in.hasNextInt())
-  			this.table[i][j] = in.nextInt();}
+  		{if(in.hasNextDouble())
+  			this.table[i][j] = in.nextDouble();}
   		}
   	in.close();
     	}
-  	}catch (IOException x){x.printStackTrace();}
+  	}catch (IOException x){
+      System.out.println("File not found.");
+      this.readFileMatrix();
+    }
   }
 
   void writeMatrix(){
@@ -122,7 +148,7 @@ public class Matrix{
    private void swapRows(int i, int k){
      for (int j = 0; j < this.column; j++) {
 
-      float temp = this.table[i][j];
+      Double temp = this.table[i][j];
       this.table[i][j] = this.table[k][j];
       this.table[k][j] = temp;
 
@@ -256,10 +282,11 @@ public class Matrix{
                 };
                 if (this.table[i][j]<0){
                   if(this.table[i][this.column-1]!=0){
-                    System.out.printf(" + ");
+                    System.out.printf(" +");
                   }
                 }
                 if (this.table[i][j]!=1 && this.table[i][j]!=-1){
+                  System.out.printf(" ");
                   System.out.print((this.table[i][j])*-1);
                 }
                 if (this.table[i][j]==1){
@@ -280,13 +307,32 @@ public class Matrix{
        System.out.println();
      }
    }
+   void interpolationEquation(){
+     if (this.isSolvable == SOLVABLE){
+       int j = this.column-1;
+       for (int i = 0; i < this.row; i++) {
+
+         if(this.table[i][j]!=0){
+           if (this.table[i][j]>=0 && i!=0){
+             System.out.print(" +");
+           }
+           System.out.print(" ");
+           if (this.table[i][j]!=1){
+             System.out.printf(Double.toString(this.table[i][j]));
+           }
+           if (i!=0){
+             System.out.printf("x^%d",i);
+           }
+         }
+       }
+
+     }
+   }
 
    void showSolutions(){
     this.gaussJordanEliminate();
     this.checkSolvable();
     if (this.isSolvable == SOLVABLE){
-      this.writeMatrix();
-      System.out.println("SOLUSI : ");
       int j = this.column-1;
       for (int i = 0; i < this.row; i++) {
         System.out.printf("x%d = ",i+1);
@@ -301,15 +347,79 @@ public class Matrix{
     }
    }
 
+   void writeExternalParameters(FileWriter w){
+     char x = 'o';
+     char[] parameters = new char[50];
+
+     try{
+       for (int i = 0; i < this.column-1; i++) {
+         if (!isZeroRow(i)){
+           w.write(String.format("x%d = ",i+1));
+           if (this.table[i][this.column-1]!=0){
+             w.write(Double.toString(this.table[i][this.column-1]));
+           }
+
+           for (int j = 0; j < this.column-1; j++) {
+             if (i!=j){
+                if (this.table[i][j]!=0){
+                  if (parameters[j]=='\0'){
+                    x++;
+                    parameters[j] = x;
+                  };
+                  if (this.table[i][j]<0){
+                    if(this.table[i][this.column-1]!=0){
+                      w.write(" +");
+                    }
+                  }
+                  if (this.table[i][j]!=1 && this.table[i][j]!=-1){
+                    w.write(" ");
+                    w.write(Double.toString((this.table[i][j]*-1)));
+                  }
+                  if (this.table[i][j]==1){
+                    w.write(String.format("-%c",parameters[j]));
+                  }
+                  else {
+                    w.write(String.format("%c",parameters[j]));
+                  }
+
+                }
+             }
+           }
+         }
+         else {
+           w.write(String.format("x%d = ",i+1));
+           w.write(String.format("%c",parameters[i]));
+         }
+         w.write("\r\n");
+       }
+     }catch (IOException e){};
+   }
+
    void writeFileMatrix() {
+     String matrixFileName;
+     String resultFileName;
+
+    System.out.print("Tuliskan nama file matriks: ");
+    matrixFileName = input.next();
+
+    System.out.print("Tuliskan nama file hasil: ");
+    resultFileName = input.next();
+
    try{
-     FileWriter w = new FileWriter("output.txt",false);
+     FileWriter w = new FileWriter(matrixFileName,false);
      for(int i = 0; i<this.row; i++){
        for(int j = 0; j<this.column; j++)
-         { w.write(Float.toString(this.table[i][j])+" ");}
+         { w.write(Double.toString(this.table[i][j])+" ");}
      w.write("\r\n");}
      w.close();
-   } catch (IOException x){System.err.println("File not found");}
+   } catch (IOException x){System.err.println("Failed to save file.");}
+
+   try{
+     FileWriter w = new FileWriter(resultFileName,false);
+     writeExternalParameters( w );
+     w.write("\r\n");
+     w.close();
+   } catch (IOException x){System.err.println("Failed to save file.");}
 
   }
 

@@ -1,54 +1,80 @@
 import java.io.*;
 import java.util.*;
 
+
 public class Main {
 
   public static void main(String[] args) {
+    int menu1;
+    char menu2;
+    char menu3;
+
     Matrix mMatrix = new Matrix();
     Scanner in = new Scanner (System.in);
 
-    // // mMatrix.readMatrix();
-    // mMatrix.readFileMatrix();
-    // mMatrix.writeMatrix();
-    // System.out.println();
-    // // mMatrix.pivotMatrix();
-    // // mMatrix.gaussEliminate();
-    // // mMatrix.rowEchelonForm();
-    // // mMatrix.writeMatrix();
-    // // mMatrix.gaussJordanEliminate();
-    // // // mMatrix.checkSolvable();
-    // // mMatrix.writeMatrix();
-    System.out.println("opsi matriks:");
-    System.out.println("1. membaca matriks dari input pembaca & menampilkan hasil");
-    System.out.println("2. membaca matriks dari file eksternal & menampilkan hasil");
-    System.out.println("3. membaca matriks dari input pembaca & menyimpan matriks ke file eksternal");
-    System.out.println("4. membaca matriks dari file eksternal & menyimpan matriks ke file eksternal");
-    System.out.print("opsi: "); int x = in.nextInt();
-    if (x == 1) {
-      mMatrix.readMatrix();
-      System.out.println("Matriks:");
-      mMatrix.showSolutions();
+    do {
+      System.out.println("\nPilihan matriks:");
+      System.out.println("1. Membaca matriks dari input pembaca");
+      System.out.println("2. Membaca matriks dari file eksternal");
+      System.out.println("3. Buat matriks interpolasi");
+      System.out.println();
+
+      do  {
+        System.out.print("Pilihan: ");
+        menu1 = in.nextInt();
+        System.out.println();
+        if (menu1 == 1) {
+          mMatrix.readMatrix();
+        }
+        else if (menu1 == 2){
+          mMatrix.readFileMatrix();
+        }
+        else if (menu1==3){
+          mMatrix.makeInterpolateData();
+        }
+        else{
+          System.out.println("Input salah. Mohon ulangi.");
+        }
+
+      } while(menu1!=1 && menu1!=2 && menu1!=3);
+
+      System.out.println();
+      System.out.println("Matriks :");
       mMatrix.writeMatrix();
-    }
-    else if (x == 2){
-      mMatrix.readFileMatrix();
-      System.out.println("Matriks:");
+      System.out.println();
+
+      System.out.println("Solusi :");
       mMatrix.showSolutions();
-      mMatrix.writeMatrix();
-    }
-    else if (x == 3){
-      mMatrix.readMatrix();
-      mMatrix.showSolutions();
-      mMatrix.writeFileMatrix();
-    }
-    else if (x == 4){
-      mMatrix.readFileMatrix();
-      mMatrix.showSolutions();
-      mMatrix.writeFileMatrix();
-    }
-    else {
-      System.out.print("Input tidak sesuai");
-     }
+
+
+      if(menu1==3) {
+        mMatrix.interpolationEquation();
+      }
+
+      System.out.println();
+
+      do {
+        System.out.println("Simpan matriks di file external? (y/n)");
+        menu2 = in.next().charAt(0);
+        if (menu2 == 'y'){
+          mMatrix.writeFileMatrix();
+        }
+        else if (menu2 == 'n') {
+          break;
+        }
+        else {
+          System.out.println("Input salah. Ulangi input.");
+        }
+
+      } while (menu2!='y' && menu2 !='n');
+
+      do {
+        System.out.println("Ulang program? (y/n)");
+        menu3 = in.next().charAt(0);
+      }while (menu3!='y' && menu3!='n');
+
+    } while(menu3!='n');
 
    }
+
 }
