@@ -9,10 +9,12 @@ public class Main {
     char menu2;
     char menu3;
 
-    Matrix mMatrix = new Matrix();
+
     Scanner in = new Scanner (System.in);
 
     do {
+      Matrix mMatrix = new Matrix();
+
       System.out.println("\nPilihan matriks:");
       System.out.println("1. Membaca matriks dari input pembaca");
       System.out.println("2. Membaca matriks dari file eksternal");
@@ -40,12 +42,14 @@ public class Main {
 
       System.out.println();
       System.out.println("Matriks :");
+      mMatrix.writeMatrix();
       System.out.println();
 
       System.out.println("Solusi :");
       // mMatrix.gaussEliminate();
       mMatrix.showSolutions();
-      mMatrix.writeMatrix();
+      // mMatrix.writeMatrix();
+      System.out.println();
       // System.out.println("GAUSS JORDAN");
       // mMatrix.gaussJordanEliminate();
       // mMatrix.pivotMatrix();
@@ -75,8 +79,8 @@ public class Main {
         System.out.println("Ulang program? (y/n)");
         menu3 = in.next().charAt(0);
       }while (menu3!='y' && menu3!='n');
-      mMatrix = null;
 
+      mMatrix = null;
     } while(menu3!='n');
 
    }

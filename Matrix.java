@@ -14,12 +14,15 @@ public class Matrix{
   final Double  DELTA = 9.0E-6;
   double div;
   double m;
-
+  char x = 'o';
   private int row;
   private int column;
   private double[][] table = new double[maxRow][maxColumn];
   private char[] parameters = new char[50];
+  private char[] vars = new char[50];
   private int isSolvable = SOLVABLE;
+  private int paramNumber = 0;
+  private int paramNow = 0;
 
 
   Scanner input = new Scanner(System.in);
@@ -250,7 +253,6 @@ public class Matrix{
    void gaussJordanEliminate(){
      int leadCol;
        this.rowEchelonForm();
-       System.out.println("GAUSSJORDAN");
        for (int n = 0; n < 2; n++) {
 
        for (int i = 0; i < this.row-1; i++) {
@@ -261,9 +263,7 @@ public class Matrix{
            leadCol = getLeadingIndex(k);
 
            if (leadCol!=-1){
-             System.out.println("K"+leadCol+" BARIS "+i +" dikurang BARIS " + k);
              div = this.table[i][leadCol]/this.table[k][leadCol];
-             System.out.println(div);
                for (int j = leadCol; j < this.column; j++) {
                  this.table[i][j]-= div * this.table[k][j];
              }
@@ -271,8 +271,6 @@ public class Matrix{
             }
 
             this.secondPivot();
-            this.writeMatrix();
-            System.out.println();
 
          }
        }
@@ -333,39 +331,63 @@ public class Matrix{
      return check;
    }
 
-// boolean checkRowSolution(int row){
-//
-//   if (getLeadingIndex(row)==-1){
-//     return false;
-//   }
-//   else {
-//     for (int i = getLeadingIndex(row); i < this.column-1; i++) {
-//       if (this.table[row][i]!=0){
-//         return false;
-//       };
-//     }
-//   }
-//   return true;
-// }
+boolean checkRowSolution(int row){
 
+  if (getLeadingIndex(row)==-1){
+    return false;
+  }
+  else {
+    for (int i = getLeadingIndex(row); i < this.column-1; i++) {
+      if (this.table[row][i]!=0){
+        return false;
+      };
+    }
+  }
+  return true;
+}
+
+int numberOfParams(){
+  int count=0;
+  for (int i = 0; i < this.column-1; i++) {
+    if (getLeadingIndex(i)==-1){
+      count++;
+    }
+  }
+
+  return count;
+}
 void printRowParams(int row){
-  char x = 'o';
+
 
   if (this.table[row][this.column]!=0){
     System.out.println(this.table[row][this.column]);
   }
 
   if (!checkRowSolution(row)){
-    for (int j = getLeadingIndex(row)+1; j < this.column-1; j++) {
-      if (this.table[row][j]!=0){
-        if (parameters[j]=='\0')
-        x++;
-        parameters[j] = x;
-      }
+    if(getLeadingIndex(row)!=-1) {
+      for (int j = getLeadingIndex(row)+1; j < this.column-1; j++) {
+        if (this.table[row][j]!=0){
+          if (parameters[j]=='\0'){
+            x++;
+            parameters[j] = x;
+            vars[paramNumber] = x;
+            paramNumber++;
+          }
+          if(this.table[row][j]<0){
+            System.out.print(" + ");
+          }
+          System.out.print(this.table[row][j]*-1);
 
-      System.out.print(parameters[j]);
+          System.out.print(parameters[j]);
+        }
+      }
+    }
+    else {
+        System.out.print(vars[paramNow]);
+        paramNow++;
     }
   }
+
 }
 
 
@@ -374,7 +396,14 @@ void printRowParams(int row){
      boolean isSolved;
      for (int i = 0; i < this.column-1; i++) {
         System.out.printf("x%d = ",i+1);
-        checkRowSolution(i);
+
+        if (this.table[i][this.column-1]!=0){
+          System.out.print(this.table[i][column-1]);
+        }
+
+        if(!checkRowSolution(i)) {
+          printRowParams(i);
+        }
         System.out.println();
      }
    }
@@ -404,6 +433,8 @@ void printRowParams(int row){
     this.gaussJordanEliminate();
     this.secondPivot();
     this.checkSolvable();
+    this.writeMatrix();
+    System.out.println();
     if (this.isSolvable == SOLVABLE){
       int j = this.column-1;
       for (int i = 0; i < this.row; i++) {
