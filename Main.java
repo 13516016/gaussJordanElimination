@@ -40,12 +40,15 @@ public class Main {
 
       System.out.println();
       System.out.println("Matriks :");
-      mMatrix.writeMatrix();
       System.out.println();
 
       System.out.println("Solusi :");
+      // mMatrix.gaussEliminate();
       mMatrix.showSolutions();
-
+      mMatrix.writeMatrix();
+      // System.out.println("GAUSS JORDAN");
+      // mMatrix.gaussJordanEliminate();
+      // mMatrix.pivotMatrix();
 
       if(menu1==3) {
         mMatrix.interpolationEquation();
@@ -72,6 +75,7 @@ public class Main {
         System.out.println("Ulang program? (y/n)");
         menu3 = in.next().charAt(0);
       }while (menu3!='y' && menu3!='n');
+      mMatrix = null;
 
     } while(menu3!='n');
 
