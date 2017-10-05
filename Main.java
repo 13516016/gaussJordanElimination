@@ -46,13 +46,8 @@ public class Main {
       System.out.println();
 
       System.out.println("Solusi :");
-      // mMatrix.gaussEliminate();
       mMatrix.showSolutions();
-      // mMatrix.writeMatrix();
       System.out.println();
-      // System.out.println("GAUSS JORDAN");
-      // mMatrix.gaussJordanEliminate();
-      // mMatrix.pivotMatrix();
 
       if(menu1==3) {
         mMatrix.interpolationEquation();

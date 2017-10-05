@@ -358,7 +358,6 @@ int numberOfParams(){
 }
 void printRowParams(int row){
 
-
   if (this.table[row][this.column]!=0){
     System.out.println(this.table[row][this.column]);
   }
@@ -389,10 +388,45 @@ void printRowParams(int row){
   }
 
 }
+void printExtRowParams(FileWriter w, int row){
+  try {
+    if (this.table[row][this.column]!=0){
+      w.write(Double.toString(this.table[row][this.column]));
+      w.write("\r\n");
+    }
+    if (!checkRowSolution(row)){
+      if(getLeadingIndex(row)!=-1) {
+        for (int j = getLeadingIndex(row)+1; j < this.column-1; j++) {
+          if (this.table[row][j]!=0){
+            if (parameters[j]=='\0'){
+              x++;
+              parameters[j] = x;
+              vars[paramNumber] = x;
+              paramNumber++;
+            }
+            if(this.table[row][j]<0){
+              w.write(" + ");
+            }
+              w.write(Double.toString(this.table[row][j]*-1));
+
+              w.write(parameters[j]);
+          }
+        }
+      }
+      else {
+          w.write(vars[paramNow]);
+          paramNow++;
+      }
+    }
+  } catch(IOException e) {
+    System.out.println("Failed to write to file");
+  }
+
+}
 
 
    private void printParameters(){
-
+     paramNow =0;
      boolean isSolved;
      for (int i = 0; i < this.column-1; i++) {
         System.out.printf("x%d = ",i+1);
@@ -407,6 +441,28 @@ void printRowParams(int row){
         System.out.println();
      }
    }
+
+   private void writeExternalParameters(FileWriter w){
+     paramNow =0;
+     boolean isSolved;
+
+     try {
+       for (int i = 0; i < this.column-1; i++) {
+          w.write(String.format("x%d = ",i+1));
+
+          if (this.table[i][this.column-1]!=0){
+            w.write(Double.toString(this.table[i][column-1]));
+          }
+
+          printExtRowParams(w,i);
+
+          w.write("\r\n");
+       }
+     } catch(IOException e) {
+       System.out.println("Failed to write");
+    }
+   }
+
    void interpolationEquation(){
      if (this.isSolvable == SOLVABLE){
        int j = this.column-1;
@@ -450,81 +506,32 @@ void printRowParams(int row){
     }
    }
 
-   void writeExternalParameters(FileWriter w){
-     char x = 'o';
-     char[] parameters = new char[50];
-
-     try{
-       for (int i = 0; i < this.column-1; i++) {
-         if (!isZeroRow(i)){
-           w.write(String.format("x%d = ",i+1));
-           if (this.table[i][this.column-1]!=0){
-             w.write(Double.toString(this.table[i][this.column-1]));
-           }
-
-           for (int j = 0; j < this.column-1; j++) {
-             if (i!=j){
-                if (this.table[i][j]!=0){
-                  if (parameters[j]=='\0'){
-                    x++;
-                    parameters[j] = x;
-                  };
-                  if (this.table[i][j]<0){
-                    if(this.table[i][this.column-1]!=0){
-                      w.write(" +");
-                    }
-                  }
-                  if (this.table[i][j]!=1 && this.table[i][j]!=-1){
-                    w.write(" ");
-                    w.write(Double.toString((this.table[i][j]*-1)));
-                  }
-                  if (this.table[i][j]==1){
-                    w.write(String.format("-%c",parameters[j]));
-                  }
-                  else {
-                    w.write(String.format("%c",parameters[j]));
-                  }
-
-                }
-             }
-           }
-         }
-         else {
-           w.write(String.format("x%d = ",i+1));
-           w.write(String.format("%c",parameters[i]));
-         }
-         w.write("\r\n");
-       }
-     }catch (IOException e){};
-   }
-
    void writeFileMatrix() {
      String matrixFileName;
      String resultFileName;
 
-    System.out.print("Tuliskan nama file matriks: ");
-    matrixFileName = input.next();
+      System.out.print("Tuliskan nama file matriks: ");
+      matrixFileName = input.next();
 
-    System.out.print("Tuliskan nama file hasil: ");
-    resultFileName = input.next();
+      System.out.print("Tuliskan nama file hasil: ");
+      resultFileName = input.next();
 
-   try{
-     FileWriter w = new FileWriter(matrixFileName,false);
-     for(int i = 0; i<this.row; i++){
-       for(int j = 0; j<this.column; j++)
-         { w.write(Double.toString(this.table[i][j])+" ");}
-     w.write("\r\n");}
-     w.close();
-   } catch (IOException x){System.err.println("Failed to save file.");}
+     try{
+       FileWriter w = new FileWriter(matrixFileName,false);
+       for(int i = 0; i<this.row; i++){
+         for(int j = 0; j<this.column; j++)
+           { w.write(Double.toString(this.table[i][j])+" ");}
+       w.write("\r\n");}
+       w.close();
+     } catch (IOException x){System.err.println("Failed to save file.");}
 
-   try{
-     FileWriter w = new FileWriter(resultFileName,false);
-     writeExternalParameters( w );
-     w.write("\r\n");
-     w.close();
+     try{
+       FileWriter w = new FileWriter(resultFileName,false);
+       writeExternalParameters( w );
+       w.write("\r\n");
+       w.close();
    } catch (IOException x){System.err.println("Failed to save file.");}
 
   }
-
 
 }
