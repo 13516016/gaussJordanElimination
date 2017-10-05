@@ -11,7 +11,7 @@ public class Matrix{
   final int  INFINITE_SOLUTION = 0;
   final int  NO_SOLUTION = -1;
 
-  final Double  DELTA = 9.0E-6;
+  final Double  DELTA = 9.0E-25;
   double div;
   double m;
   char x = 'o';
@@ -75,6 +75,32 @@ public class Matrix{
       }
       System.out.printf("f(x%d) = ",i+1);
       y = input.nextDouble();
+      this.table[i][this.column-1] = y;
+    }
+  }
+  double eFunction(double x){
+    double y = (Math.exp(-x))/(1+Math.sqrt(x)+(x*x));
+    return y;
+  }
+
+  void makeInterpolateEFunction(){
+    int n;
+    Double[] data= new Double[maxColumn];
+    Double x;
+    Double y;
+
+    System.out.print("Tulis jumlah data : ");
+    n = input.nextInt();
+    this.row = n;
+    this.column = n+1;
+
+    for (int i = 0; i < row; i++) {
+      System.out.printf("x%d = ",i+1);
+      x = input.nextDouble();
+      for (int j = 0; j < column-1; j++) {
+        this.table[i][j] = Math.pow(x,j);
+      }
+      y = eFunction(x);
       this.table[i][this.column-1] = y;
     }
   }
@@ -244,30 +270,27 @@ public class Matrix{
           }
         }
 
-
       }
+
     }
 
    }
 
    void gaussJordanEliminate(){
      int leadCol;
-       this.rowEchelonForm();
-       for (int n = 0; n < 2; n++) {
-
+       for (int n = 0; n < 50; n++) {
        for (int i = 0; i < this.row-1; i++) {
+         this.rowEchelonForm();
          for (int k = i+1; k < this.row; k++) {
 
            this.pivotMatrix();
 
            leadCol = getLeadingIndex(k);
-
            if (leadCol!=-1){
              div = this.table[i][leadCol]/this.table[k][leadCol];
                for (int j = leadCol; j < this.column; j++) {
                  this.table[i][j]-= div * this.table[k][j];
              }
-
             }
 
             this.secondPivot();
@@ -494,6 +517,23 @@ public class Matrix{
 
     return approx;
   }
+  void makeHilbert() {
+   System.out.print("Masukkan N:");
+   int N = input.nextInt();
+
+   this.row = N;
+   this.column= N+1;
+
+   for(int i=0;i< this.row ;i++){
+     for(int j=0;j< this.column-1 ;j++){
+       this.table[i][j] = 1.0 / (j+i+1);
+     }
+   }
+
+   for(int i=0;i<N;i++){
+     this.table[i][N]=1;
+  }
+}
 
   void showSolutions(){
       this.gaussJordanEliminate();

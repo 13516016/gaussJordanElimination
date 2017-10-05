@@ -22,6 +22,8 @@ public class Main {
       System.out.println("1. Membaca matriks dari input pembaca");
       System.out.println("2. Membaca matriks dari file eksternal");
       System.out.println("3. Buat matriks interpolasi");
+      System.out.println("4. Buat matriks Hilbert");
+      System.out.println("5. fungsi e");
       System.out.println();
 
       do  {
@@ -38,11 +40,17 @@ public class Main {
           mMatrix.makeInterpolateData();
 
         }
+        else if (menu1==4){
+          mMatrix.makeHilbert();
+        }
+        else if (menu1==5){
+          mMatrix.makeInterpolateEFunction();
+        }
         else{
           System.out.println("Input salah. Mohon ulangi.");
         }
 
-      } while(menu1!=1 && menu1!=2 && menu1!=3 );
+      } while( (menu1<=1) && (menu1>=5) );
 
       System.out.println();
       System.out.println("Matriks :");
@@ -53,7 +61,7 @@ public class Main {
       mMatrix.showSolutions();
       System.out.println();
 
-      if(menu1==3) {
+      if(menu1==3 || menu1==5) {
 
         mMatrix.interpolationEquation();
         System.out.println();
