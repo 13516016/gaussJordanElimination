@@ -331,69 +331,37 @@ public class Matrix{
      return check;
    }
 
-boolean checkRowSolution(int row){
+  boolean checkRowSolution(int row){
 
-  if (getLeadingIndex(row)==-1){
-    return false;
-  }
-  else {
-    for (int i = getLeadingIndex(row); i < this.column-1; i++) {
-      if (this.table[row][i]!=0){
-        return false;
-      };
-    }
-  }
-  return true;
-}
-
-int numberOfParams(){
-  int count=0;
-  for (int i = 0; i < this.column-1; i++) {
-    if (getLeadingIndex(i)==-1){
-      count++;
-    }
-  }
-
-  return count;
-}
-void printRowParams(int row){
-
-  if (this.table[row][this.column]!=0){
-    System.out.println(this.table[row][this.column]);
-  }
-
-  if (!checkRowSolution(row)){
-    if(getLeadingIndex(row)!=-1) {
-      for (int j = getLeadingIndex(row)+1; j < this.column-1; j++) {
-        if (this.table[row][j]!=0){
-          if (parameters[j]=='\0'){
-            x++;
-            parameters[j] = x;
-            vars[paramNumber] = x;
-            paramNumber++;
-          }
-          if(this.table[row][j]<0){
-            System.out.print(" + ");
-          }
-          System.out.print(this.table[row][j]*-1);
-
-          System.out.print(parameters[j]);
-        }
-      }
+    if (getLeadingIndex(row)==-1){
+      return false;
     }
     else {
-        System.out.print(vars[paramNow]);
-        paramNow++;
+      for (int i = getLeadingIndex(row); i < this.column-1; i++) {
+        if (this.table[row][i]!=0){
+          return false;
+        };
+      }
     }
+    return true;
   }
 
-}
-void printExtRowParams(FileWriter w, int row){
-  try {
-    if (this.table[row][this.column]!=0){
-      w.write(Double.toString(this.table[row][this.column]));
-      w.write("\r\n");
+  int numberOfParams(){
+    int count=0;
+    for (int i = 0; i < this.column-1; i++) {
+      if (getLeadingIndex(i)==-1){
+        count++;
+      }
     }
+
+    return count;
+  }
+  void printRowParams(int row){
+
+    if (this.table[row][this.column]!=0){
+      System.out.println(this.table[row][this.column]);
+    }
+
     if (!checkRowSolution(row)){
       if(getLeadingIndex(row)!=-1) {
         for (int j = getLeadingIndex(row)+1; j < this.column-1; j++) {
@@ -405,152 +373,195 @@ void printExtRowParams(FileWriter w, int row){
               paramNumber++;
             }
             if(this.table[row][j]<0){
-              w.write(" + ");
+              System.out.print(" + ");
             }
-              w.write(Double.toString(this.table[row][j]*-1));
+            System.out.print(this.table[row][j]*-1);
 
-              w.write(parameters[j]);
+            System.out.print(parameters[j]);
           }
         }
       }
       else {
-          w.write(vars[paramNow]);
+          System.out.print(vars[paramNow]);
           paramNow++;
       }
     }
-  } catch(IOException e) {
-    System.out.println("Failed to write to file");
+
+  }
+  void printExtRowParams(FileWriter w, int row){
+    try {
+      if (this.table[row][this.column]!=0){
+        w.write(Double.toString(this.table[row][this.column]));
+        w.write("\r\n");
+      }
+      if (!checkRowSolution(row)){
+        if(getLeadingIndex(row)!=-1) {
+          for (int j = getLeadingIndex(row)+1; j < this.column-1; j++) {
+            if (this.table[row][j]!=0){
+              if (parameters[j]=='\0'){
+                x++;
+                parameters[j] = x;
+                vars[paramNumber] = x;
+                paramNumber++;
+              }
+              if(this.table[row][j]<0){
+                w.write(" + ");
+              }
+                w.write(Double.toString(this.table[row][j]*-1));
+
+                w.write(parameters[j]);
+            }
+          }
+        }
+        else {
+            w.write(vars[paramNow]);
+            paramNow++;
+        }
+      }
+    } catch(IOException e) {
+      System.out.println("Failed to write to file");
+    }
+
   }
 
-}
 
-
-   private void printParameters(){
-     paramNow =0;
-     boolean isSolved;
-     for (int i = 0; i < this.column-1; i++) {
-        System.out.printf("x%d = ",i+1);
-
-        if (this.table[i][this.column-1]!=0){
-          System.out.print(this.table[i][column-1]);
-        }
-
-        if(!checkRowSolution(i)) {
-          printRowParams(i);
-        }
-        System.out.println();
-     }
-   }
-
-   private void writeExternalParameters(FileWriter w){
-     paramNow =0;
-     boolean isSolved;
-
-     try {
+  private void printParameters(){
+       paramNow =0;
+       boolean isSolved;
        for (int i = 0; i < this.column-1; i++) {
-          w.write(String.format("x%d = ",i+1));
+          System.out.printf("x%d = ",i+1);
 
           if (this.table[i][this.column-1]!=0){
-            w.write(Double.toString(this.table[i][column-1]));
+            System.out.print(this.table[i][column-1]);
           }
 
-          printExtRowParams(w,i);
-
-          w.write("\r\n");
+          if(!checkRowSolution(i)) {
+            printRowParams(i);
+          }
+          System.out.println();
        }
-     } catch(IOException e) {
-       System.out.println("Failed to write");
-    }
-   }
+     }
 
-   void interpolationEquation(){
-     if (this.isSolvable == SOLVABLE){
-       int j = this.column-1;
-       for (int i = 0; i < this.row; i++) {
+  private void writeExternalParameters(FileWriter w){
+       paramNow =0;
+       boolean isSolved;
 
-         if(this.table[i][j]!=0){
-           if (this.table[i][j]>=0 && i!=0){
-             System.out.print(" +");
-           }
-           System.out.print(" ");
-           if (this.table[i][j]!=1){
-             System.out.printf(Double.toString(this.table[i][j]));
-           }
-           if (i!=0){
-             System.out.printf("x^%d",i);
+       try {
+         for (int i = 0; i < this.column-1; i++) {
+            w.write(String.format("x%d = ",i+1));
+
+            if (this.table[i][this.column-1]!=0){
+              w.write(Double.toString(this.table[i][column-1]));
+            }
+
+            printExtRowParams(w,i);
+
+            w.write("\r\n");
+         }
+       } catch(IOException e) {
+         System.out.println("Failed to write");
+      }
+     }
+
+  void interpolationEquation(){
+       if (this.isSolvable == SOLVABLE){
+         int j = this.column-1;
+         for (int i = 0; i < this.row; i++) {
+
+           if(this.table[i][j]!=0){
+             if (this.table[i][j]>=0 && i!=0){
+               System.out.print(" +");
+             }
+             System.out.print(" ");
+             if (this.table[i][j]!=1){
+               System.out.printf(Double.toString(this.table[i][j]));
+             }
+             if (i!=0){
+               System.out.printf("x^%d",i);
+             }
            }
          }
        }
-
      }
-   }
 
-   void showSolutions(){
-    this.gaussJordanEliminate();
-    this.secondPivot();
-    this.checkSolvable();
-    this.writeMatrix();
-    System.out.println();
-    if (this.isSolvable == SOLVABLE){
-      int j = this.column-1;
-      for (int i = 0; i < this.row; i++) {
-        System.out.printf("x%d = ",i+1);
-        System.out.println(this.table[i][j]);
+  double getApproxFunction(double input){
+    double approx=0;
+
+    int j = this.column-1;
+    for (int i = 0; i < this.row; i++) {
+      approx+= this.table[i][j]*Math.pow(input,i);
+    }
+
+    return approx;
+  }
+
+  void showSolutions(){
+      this.gaussJordanEliminate();
+      this.secondPivot();
+      this.checkSolvable();
+      this.writeMatrix();
+      System.out.println();
+      if (this.isSolvable == SOLVABLE){
+        int j = this.column-1;
+        for (int i = 0; i < this.row; i++) {
+          System.out.printf("x%d = ",i+1);
+          System.out.println(this.table[i][j]);
+        }
       }
-    }
-    else if (this.isSolvable == INFINITE_SOLUTION){
-      this.printParameters();
-    }
-    else {
-      System.out.println("Persamaan tidak memiliki penyelesaian.");
-    }
-   }
-   void writeFileSolution(FileWriter w){
-     int j = this.column-1;
-     try {
-
-       for (int i = 0; i < this.row; i++) {
-         w.write(String.format("x%d = ",i+1));
-         w.write(Double.toString(this.table[i][j]));
-         w.write("\r\n");
-       }
-     } catch(IOException e) {
-       System.out.println("Failed to write file.");
+      else if (this.isSolvable == INFINITE_SOLUTION){
+        this.printParameters();
+      }
+      else {
+        System.out.println("Persamaan tidak memiliki penyelesaian.");
+      }
      }
-   }
-   void writeFileMatrix() {
-     String matrixFileName;
-     String resultFileName;
 
-      System.out.print("Tuliskan nama file matriks: ");
-      matrixFileName = input.next();
+  void writeFileSolution(FileWriter w){
+       int j = this.column-1;
+       try {
 
-      System.out.print("Tuliskan nama file hasil: ");
-      resultFileName = input.next();
+         for (int i = 0; i < this.row; i++) {
+           w.write(String.format("x%d = ",i+1));
+           w.write(Double.toString(this.table[i][j]));
+           w.write("\r\n");
+         }
+       } catch(IOException e) {
+         System.out.println("Failed to write file.");
+       }
+     }
+  void writeFileMatrix() {
+       String matrixFileName;
+       String resultFileName;
 
-     try{
-       FileWriter w = new FileWriter("test/"+matrixFileName,false);
-       for(int i = 0; i<this.row; i++){
-         for(int j = 0; j<this.column; j++)
-           { w.write(Double.toString(this.table[i][j])+" ");}
-       w.write("\r\n");}
-       w.close();
+        System.out.print("Tuliskan nama file matriks: ");
+        matrixFileName = input.next();
+
+        System.out.print("Tuliskan nama file hasil: ");
+        resultFileName = input.next();
+
+       try{
+         FileWriter w = new FileWriter("test/"+matrixFileName,false);
+         for(int i = 0; i<this.row; i++){
+           for(int j = 0; j<this.column; j++)
+             { w.write(Double.toString(this.table[i][j])+" ");}
+         w.write("\r\n");}
+         w.close();
+       } catch (IOException x){System.err.println("Failed to save file.");}
+
+       try{
+         FileWriter w = new FileWriter("test/"+resultFileName,false);
+         if (this.isSolvable == SOLVABLE){
+           writeFileSolution(w);
+         }
+         else if (this.isSolvable == INFINITE_SOLUTION) {
+           writeExternalParameters( w );
+         }
+         else {
+           w.write("Persamaan tidak memiliki penyelesaian.");
+         }
+         w.write("\r\n");
+         w.close();
      } catch (IOException x){System.err.println("Failed to save file.");}
-
-     try{
-       FileWriter w = new FileWriter("test/"+resultFileName,false);
-       if (this.isSolvable == SOLVABLE){
-         writeFileSolution(w);
-       }
-       else if (this.isSolvable == INFINITE_SOLUTION) {
-         writeExternalParameters( w );
-       }
-       else {
-         w.write("Persamaan tidak memiliki penyelesaian.");
-       }
-       w.write("\r\n");
-       w.close();
-   } catch (IOException x){System.err.println("Failed to save file.");}
 
   }
 

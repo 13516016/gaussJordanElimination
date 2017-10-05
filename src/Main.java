@@ -6,8 +6,11 @@ public class Main {
 
   public static void main(String[] args) {
     int menu1;
+    double input;
     char menu2;
     char menu3;
+    char menu4;
+
 
 
     Scanner in = new Scanner (System.in);
@@ -33,12 +36,13 @@ public class Main {
         }
         else if (menu1==3){
           mMatrix.makeInterpolateData();
+
         }
         else{
           System.out.println("Input salah. Mohon ulangi.");
         }
 
-      } while(menu1!=1 && menu1!=2 && menu1!=3);
+      } while(menu1!=1 && menu1!=2 && menu1!=3 );
 
       System.out.println();
       System.out.println("Matriks :");
@@ -50,7 +54,18 @@ public class Main {
       System.out.println();
 
       if(menu1==3) {
+
         mMatrix.interpolationEquation();
+        System.out.println();
+
+        System.out.println("Apakah anda ingin menghampiri suatu nilai? (y/n)");
+        menu4 = in.next().charAt(0);
+        if (menu4 == 'y'){
+          System.out.println("Masukkan suatu nilai : ");
+          input = in.nextDouble();
+          System.out.println("f("+input+") = " + mMatrix.getApproxFunction(input));
+        }
+
       }
 
       System.out.println();
