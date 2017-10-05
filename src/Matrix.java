@@ -85,7 +85,7 @@ public class Matrix{
     System.out.print("Tuliskan nama file: ");
     fileName = input.next();
   	try{
-  	Scanner in  = new Scanner(new File(fileName));
+  	Scanner in  = new Scanner(new File("test/"+fileName));
   	int row = 0; int col = 0;
   	//algoritma hitung baris dan kolom
   	//baca baris pertama
@@ -108,7 +108,7 @@ public class Matrix{
     this.column = col;
   	in.close();
   	//algoritma baca matriks
-  	in  = new Scanner(new File(fileName));
+  	in  = new Scanner(new File("test/"+fileName));
   	for(int i=0; i<row; i++)
   	{for(int j=0;j<col;j++)
   		{if(in.hasNextDouble())
@@ -505,7 +505,19 @@ void printExtRowParams(FileWriter w, int row){
       System.out.println("Persamaan tidak memiliki penyelesaian.");
     }
    }
+   void writeFileSolution(FileWriter w){
+     int j = this.column-1;
+     try {
 
+       for (int i = 0; i < this.row; i++) {
+         w.write(String.format("x%d = ",i+1));
+         w.write(Double.toString(this.table[i][j]));
+         w.write("\r\n");
+       }
+     } catch(IOException e) {
+       System.out.println("Failed to write file.");
+     }
+   }
    void writeFileMatrix() {
      String matrixFileName;
      String resultFileName;
@@ -517,7 +529,7 @@ void printExtRowParams(FileWriter w, int row){
       resultFileName = input.next();
 
      try{
-       FileWriter w = new FileWriter(matrixFileName,false);
+       FileWriter w = new FileWriter("test/"+matrixFileName,false);
        for(int i = 0; i<this.row; i++){
          for(int j = 0; j<this.column; j++)
            { w.write(Double.toString(this.table[i][j])+" ");}
@@ -526,8 +538,16 @@ void printExtRowParams(FileWriter w, int row){
      } catch (IOException x){System.err.println("Failed to save file.");}
 
      try{
-       FileWriter w = new FileWriter(resultFileName,false);
-       writeExternalParameters( w );
+       FileWriter w = new FileWriter("test/"+resultFileName,false);
+       if (this.isSolvable == SOLVABLE){
+         writeFileSolution(w);
+       }
+       else if (this.isSolvable == INFINITE_SOLUTION) {
+         writeExternalParameters( w );
+       }
+       else {
+         w.write("Persamaan tidak memiliki penyelesaian.");
+       }
        w.write("\r\n");
        w.close();
    } catch (IOException x){System.err.println("Failed to save file.");}
